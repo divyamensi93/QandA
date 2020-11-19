@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -71,5 +72,47 @@ public class QuestionAnswerServiceImplTest {
         assertNotNull(answers);
         assertEquals("answer1", answers.get(0));
 
+    }
+    
+    @Test
+    public void notStoredQuestionTest() {
+         Mockito.when(repo.findByQuestion("question3")).thenReturn(null);
+         List<String> answers = service.getAnswers("question3");
+         assertNotNull(answers);
+         assertEquals("\"" + "the answer to life, universe and everything is 42" + "\"" + " according to" + "\""
+                 + "The hitchhikers guide to the Galaxy" + "\"", answers.get(0));
+    }
+    
+    @Test
+    public void multipleAnswersTest() {
+    	Question q = createQuestionEntity();
+        Mockito.when(repo.findByQuestion("question2")).thenReturn(Optional.ofNullable(q));
+        String newAnswers = "answer1"+ "\""+ "answer2";
+        service.addQuestion("question2", newAnswers);
+        List<String> answers = service.getAnswers("question2");
+        assertNotNull(answers);
+        assertEquals(2, answers.size());
+    }
+    
+    @Test
+    public void testExactMatch() {
+        Question q = createQuestionEntity();
+        Mockito.when(repo.findByQuestion("question1")).thenReturn(Optional.ofNullable(q));
+        String newAnswers = "answer1";
+        service.addQuestion("question1", newAnswers);
+        List<String> answers = service.getAnswers("question1");
+        assertNotNull(answers);
+        assertEquals("answer1", answers.get(0));
+    }
+    
+    @Test
+    public void testExactMatchFailure() {
+        Question q = createQuestionEntity();
+        Mockito.when(repo.findByQuestion("question1")).thenReturn(Optional.ofNullable(q));
+        String newAnswers = "answer1";
+        service.addQuestion("question1", newAnswers);
+        List<String> answers = service.getAnswers("question1 ");
+        assertNotNull(answers);
+        assertNotEquals("answer1", answers.get(0));
     }
 }
