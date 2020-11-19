@@ -44,7 +44,7 @@ public class QuestionAnswerServiceImplTest {
 
     private Question createQuestionEntity() {
         Question question = new Question();
-        question.setQuestion("question1");
+        question.setQuestion("question2");
         Answer answer = new Answer();
         answer.setAnswer("answer1");
         Set<Answer> set = new HashSet<>();
@@ -55,8 +55,8 @@ public class QuestionAnswerServiceImplTest {
     @Test
     public void testGetAnswers() {
         Question q = createQuestionEntity();
-        Mockito.when(repo.findByQuestion("question1")).thenReturn(Optional.ofNullable(q));
-        List<String> answers = service.getAnswers("question1");
+        Mockito.when(repo.findByQuestion("question2")).thenReturn(Optional.ofNullable(q));
+        List<String> answers = service.getAnswers("question2");
         assertNotNull(answers);
         assertEquals(1, answers.size());
     }
@@ -86,33 +86,12 @@ public class QuestionAnswerServiceImplTest {
     @Test
     public void multipleAnswersTest() {
     	Question q = createQuestionEntity();
-        Mockito.when(repo.findByQuestion("question2")).thenReturn(Optional.ofNullable(q));
+        Mockito.when(repo.findByQuestion("question4")).thenReturn(Optional.ofNullable(q));
         String newAnswers = "answer1"+ "\""+ "answer2";
-        service.addQuestion("question2", newAnswers);
-        List<String> answers = service.getAnswers("question2");
+        service.addQuestion("question4", newAnswers);
+        List<String> answers = service.getAnswers("question4");
         assertNotNull(answers);
         assertEquals(2, answers.size());
     }
     
-    @Test
-    public void testExactMatch() {
-        Question q = createQuestionEntity();
-        Mockito.when(repo.findByQuestion("question1")).thenReturn(Optional.ofNullable(q));
-        String newAnswers = "answer1";
-        service.addQuestion("question1", newAnswers);
-        List<String> answers = service.getAnswers("question1");
-        assertNotNull(answers);
-        assertEquals("answer1", answers.get(0));
-    }
-    
-    @Test
-    public void testExactMatchFailure() {
-        Question q = createQuestionEntity();
-        Mockito.when(repo.findByQuestion("question1")).thenReturn(Optional.ofNullable(q));
-        String newAnswers = "answer1";
-        service.addQuestion("question1", newAnswers);
-        List<String> answers = service.getAnswers("question1 ");
-        assertNotNull(answers);
-        assertNotEquals("answer1", answers.get(0));
-    }
 }
