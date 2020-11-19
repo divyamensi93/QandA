@@ -41,6 +41,15 @@ public class QuestionRepositoryTest {
         assertEquals("question1", qq.getQuestion());
         repository.flush();
     }
+    
+    @Test
+    public void testQuestionExactMatchFailure() {
+        Question question = createUserEntity();
+        repository.save(question);
+        Optional<Question> q = repository.findByQuestion("question 1");
+        assertEquals(false, q.isPresent());
+        repository.flush();
+    }
 
     private Question createUserEntity() {
         Question question = new Question();
